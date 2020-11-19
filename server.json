@@ -1,0 +1,41 @@
+{
+  "foods": [
+    {
+      "id": 1,
+      "name": "Ao molho",
+      "description": "Macarrão ao molho branco, fughi e cheiro verde das montanhas.",
+      "price": "29.90",
+      "available": true,
+      "image": "https://storage.googleapis.com/golden-wind/bootcamp-gostack/desafio-food/food1.png"
+    },
+    {
+      "id": 3,
+      "name": "A la Camarón",
+      "description": "Macarrão com vegetais de primeira linha e camarão dos 7 mares.",
+      "price": "25.90",
+      "available": true,
+      "image": "https://storage.googleapis.com/golden-wind/bootcamp-gostack/desafio-food/food3.png"
+    },
+    {
+      "image": "a",
+      "name": "a",
+      "price": "19,90",
+      "description": "1",
+      "id": 4
+    },
+    {
+      "image": "https://img.elo7.com.br/product/zoom/22565B3/adesivo-parede-prato-comida-frango-salada-restaurante-lindo-adesivo-parede.jpg",
+      "name": "Comida muito gostosa",
+      "price": "19,20",
+      "description": "hmm",
+      "id": 5
+    },
+    {
+      "image": "",
+      "name": "hsthgsdfghsdfghs",
+      "price": "20.99",
+      "description": "adsfasdfasdfasd",
+      "id": 6
+    }
+  ]
+}
