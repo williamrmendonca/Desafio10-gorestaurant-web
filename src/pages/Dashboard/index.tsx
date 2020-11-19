@@ -1,120 +1,80 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { useParams } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+
+import Header from '../../components/Header';
 
 import api from '../../services/api';
 
-import { useToast } from '../../hooks/toast';
-
-import Header from '../../components/Header';
 import Food from '../../components/Food';
 import ModalAddFood from '../../components/ModalAddFood';
 import ModalEditFood from '../../components/ModalEditFood';
-import { IFoodPlate } from '../../components/Food';
+
 import { FoodsContainer } from './styles';
+
+interface IFoodPlate {
+  id: number;
+  name: string;
+  image: string;
+  price: string;
+  description: string;
+  available: boolean;
+}
 
 const Dashboard: React.FC = () => {
   const [foods, setFoods] = useState<IFoodPlate[]>([]);
   const [editingFood, setEditingFood] = useState<IFoodPlate>({} as IFoodPlate);
   const [modalOpen, setModalOpen] = useState(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
-  const { addToast } = useToast();
-  const { tenant } = useParams();
 
   useEffect(() => {
     async function loadFoods(): Promise<void> {
-      const { data } = await api.get('/foods');
-
-      setFoods(data);
+      const response = await api.get('/foods');
+      setFoods(response.data);
     }
 
     loadFoods();
   }, []);
 
-  const handleAddFood = useCallback(
-    async (food: Omit<IFoodPlate, 'id' | 'available'>) => {
-      try {
-        const { data } = await api.post('/foods', { ...food, available: true });
+  async function handleAddFood(
+    food: Omit<IFoodPlate, 'id' | 'available'>,
+  ): Promise<void> {
+    try {
+      const response = await api.post('/foods', food);
+      setFoods([...foods, response.data]);
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
-        setFoods(oldFoods => [...oldFoods, data]);
+  async function handleUpdateFood(
+    food: Omit<IFoodPlate, 'id' | 'available'>,
+  ): Promise<void> {
+    const updatedFood = Object.assign(editingFood, food);
 
-        addToast({
-          type: 'success',
-          title: 'Novo prato adicionado',
-          description: `${food.name} foi adicionado com sucesso`,
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    [addToast],
-  );
+    await api.put(`/foods/${updatedFood.id}`, updatedFood);
+  }
 
-  const handleUpdateFood = useCallback(
-    async (food: Omit<IFoodPlate, 'id' | 'available'>) => {
-      try {
-        const { data } = await api.put<IFoodPlate>(`/foods/${editingFood.id}`, {
-          ...food,
-          id: editingFood.id,
-          available: editingFood.available,
-        });
+  async function handleDeleteFood(id: number): Promise<void> {
+    await api.delete(`/foods/${id}`);
+    const newFoods = foods.filter(food => food.id !== id);
+    setFoods(newFoods);
+  }
 
-        const updatedFoods = foods.map(foodToMap =>
-          foodToMap.id === data.id ? data : foodToMap,
-        );
-
-        setFoods(updatedFoods);
-
-        addToast({
-          type: 'success',
-          title: 'Prato atualizado',
-          description: `${food.name} foi atualizado com sucesso`,
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    [editingFood.available, editingFood.id, foods, addToast],
-  );
-
-  const handleDeleteFood = useCallback(
-    async (id: number) => {
-      try {
-        await api.delete(`/foods/${id}`);
-
-        setFoods(oldFoods => oldFoods.filter(food => food.id !== id));
-
-        addToast({
-          type: 'info',
-          title: 'Prato removido',
-          description: `O prato foi removido com sucesso`,
-        });
-      } catch (err) {
-        console.log(err);
-      }
-    },
-    [addToast],
-  );
-
-  const toggleModal = useCallback(() => {
+  function toggleModal(): void {
     setModalOpen(!modalOpen);
-  }, [modalOpen]);
+  }
 
-  const toggleEditModal = useCallback(() => {
+  function toggleEditModal(): void {
     setEditModalOpen(!editModalOpen);
-  }, [editModalOpen]);
+  }
 
-  const handleEditFood = useCallback(
-    (food: IFoodPlate) => {
-      setEditingFood(food);
-      toggleEditModal();
-    },
-    [toggleEditModal],
-  );
+  function handleEditFood(food: IFoodPlate): void {
+    setEditModalOpen(!editModalOpen);
+    setEditingFood(food);
+  }
 
   return (
     <>
       <Header openModal={toggleModal} />
-      <h3>TENANT: {tenant}</h3>
       <ModalAddFood
         isOpen={modalOpen}
         setIsOpen={toggleModal}
