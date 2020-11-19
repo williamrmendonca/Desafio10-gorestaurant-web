@@ -20,7 +20,7 @@ GoRestaurant é um aplicativo ReactJS em TypeScript que permite ao usuário list
 <p align="center">
   <img src="https://res.cloudinary.com/w7apps/image/upload/v1605794845/gorestaurant-web_mdfoqu.gif">
 
-## :rocket: Built with
+## :rocket: Construído com
 
 Este projeto foi desenvolvido com as seguintes tecnologias:
 
